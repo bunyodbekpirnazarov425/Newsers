@@ -10,6 +10,9 @@ class Category(models.Model):
         verbose_name = "Kategoriya"
         verbose_name_plural = "Kategoriyalar"
 
+    def get_newses(self):
+        return News.objects.filter(category=self, is_active=True).order_by('-update')
+
 class Tags(models.Model):
     name = models.CharField(max_length=50, verbose_name='Teg nomi')
 
@@ -32,6 +35,13 @@ class News(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="Saytga chiqarish")
     is_banner = models.BooleanField(default=True, verbose_name="Bannerga chiqarish")
     is_weekly = models.BooleanField(default=True, verbose_name="Haftalik yangiliklar")
+    update = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan vaqti")
+
+    def get_image(self):
+        if self.image:
+            return self.image.url
+        else:
+            return "https://answers-afd.microsoft.com/static/images/image-not-found.jpg"
 
     def __str__(self):
         return self.name
