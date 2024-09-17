@@ -3,6 +3,10 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='Kategoriya')
 
+    def check_newses(self):
+        newses = self.news_set.order_by("-created").filter(is_active=True)
+        return newses
+
     def __str__(self):
         return self.name
 

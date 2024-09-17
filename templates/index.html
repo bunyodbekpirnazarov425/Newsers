@@ -21,7 +21,7 @@
                             </div>
                         </div>
                         <div class="border-bottom py-3">
-                            <a href="#" class="display-4 text-dark mb-0 link-hover">
+                            <a href="{% url 'detail' news_banner.pk %}" class="display-4 text-dark mb-0 link-hover">
                                 {{ news_banner.name }}
                             </a>
                         </div>
@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="d-flex flex-column">
-                                        <a href="#" class="h3">{{ news_top_story.name }}</a>
+                                        <a href="{% url 'detail' news_top_story.id %}" class="h3">{{ news_top_story.name }}</a>
                                         <p class="mb-0 fs-5"><i class="fa fa-clock"> {{ news_top_story.created }} </i> </p>
                                         <p class="mb-0 fs-5"><i class="fa fa-eye"> {{ news_top_story.views }} Views</i></p>
                                     </div>
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="d-flex flex-column">
-                                            <a href="#" class="h4 mb-2">{{ latest_news.name }}</a>
+                                            <a href="{% url 'detail' latest_news.id %}" class="h4 mb-2">{{ latest_news.name }}</a>
                                             <p class="fs-5 mb-0"><i class="fa fa-clock"> {{ latest_news.created }}</i></p>
                                             <p class="fs-5 mb-0"><i class="fa fa-eye"> {{ latest_news.views }} Views</i></p>
                                         </div>
@@ -75,7 +75,7 @@
                                             </div>
                                             <div class="col-7">
                                                 <div class="features-content d-flex flex-column">
-                                                    <a href="#" class="h6">{{ latest_news.name }}</a>
+                                                    <a href="{% url 'detail' latest_news.id %}" class="h6">{{ latest_news.name }}</a>
                                                     <small><i class="fa fa-clock"> {{ latest_news.created }}</i></small>
                                                     <small><i class="fa fa-eye"> {{ latest_news.views }} Views</i></small>
                                                 </div>
@@ -200,175 +200,182 @@
 
 
         <!-- Most Populer News Start -->
-
-<div class="container-fluid populer-news py-5">
-    <div class="container py-5">
-        <div class="tab-class mb-4">
-            <div class="row g-4">
-                <div class="col-lg-8 col-xl-9">
-                    <div class="d-flex flex-column flex-md-row justify-content-md-between border-bottom mb-4">
-                        <h1 class="mb-4">What’s New</h1>
-                        <ul class="nav nav-pills d-inline-flex text-center">
+        <div class="container-fluid populer-news py-5">
+            <div class="container py-5">
+                <div class="tab-class mb-4">
+                    <div class="row g-4">
+                        <div class="col-lg-8 col-xl-9">
+                            <div class="d-flex flex-column flex-md-row justify-content-md-between border-bottom mb-4">
+                                <h1 class="mb-4">What’s New</h1>
+                                <ul class="nav nav-pills d-inline-flex text-center">
                                     {% for category in categories %}
                                     <li class="nav-item mb-3">
-                                        <a class="d-flex py-2 bg-light rounded-pill {% if forloop.counter == 1 %} active {% endif %} me-2" data-bs-toggle="pill" href="{{ category.id }}">
+                                        <a class="d-flex py-2 bg-light rounded-pill {% if forloop.counter == 1 %} active {% endif %} me-2" data-bs-toggle="pill" href="#tab-{{ category.id }}">
                                             <span class="text-dark" style="width: 100px;">{{ category.name }}</span>
                                         </a>
                                     </li>
                                     {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="tab-content mb-4">
-                        <div id="#{{ category.id }}" class="tab-pane fade show {% if forloop.counter == 1 %} active {% endif %} p-0 active">
-                            <div class="row g-4">
-
-                                {% for news in newses_all %}
-                                    {% if forloop.first %}
+                                </ul>
+                            </div>
+                            <div class="tab-content mb-4">
+                                {% for category in categories %}
+                                {% if category.get_newses.exists %}
+                                <div id="tab-{{ category.id }}" class="tab-pane fade show p-0 active">
+                                    <div class="row g-4">
                                         <div class="col-lg-8">
                                             <div class="position-relative rounded overflow-hidden">
-                                                <img src="{{ news.get_image }}"
-                                                     class="img-zoomin img-fluid rounded w-100" alt="">
-                                                <div class="position-absolute text-white px-4 py-2 bg-primary rounded"
-                                                     style="top: 20px; right: 20px;">
-                                                    {{ news.category }}
+                                                <img src="{{ category.get_newses.0.get_image }}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                <div class="position-absolute text-white px-4 py-2 bg-primary rounded" style="top: 20px; right: 20px;">
+                                                    {{ category.get_newses.0.category.name }}
                                                 </div>
                                             </div>
                                             <div class="my-4">
-                                                <a href="#" class="h4">
-                                                    {{ news.name }}
-                                                </a>
+                                                <a href="{% url 'detail' category.get_newses.0.id %}" class="h4">{{ category.get_newses.0.name }}</a>
                                             </div>
-                                            <p class="mt-4">
-                                                {{ news.description|truncatewords:150 }}
-                                            </p>
                                             <div class="d-flex justify-content-between">
-                                                <a href="#" class="text-dark link-hover me-3">
-                                                        <i class="fa fa-clock"></i>
-                                                        {{ news.update|time:"H:i" }} {{ news.update|date:"d M, Y" }}
-                                                    </a>
-                                                    <a href="#" class="text-dark link-hover me-3">
-                                                        <i class="fa fa-eye"></i>
-                                                        {{ news.views }} Views
-                                                    </a>
-                                                    <a href="#" class="text-dark link-hover me-3"><i
-                                                            class="fa fa-comment-dots"></i>
-                                                        Comments
-                                                    </a>
-                                                    <a href="#"
-                                                       class="text-dark link-hover" target="_blank">
-                                                        <i class="fa fa-arrow-up"></i> 1.5K Share
-                                                    </a>
+                                                <a href="#" class="text-dark link-hover me-3"><i class="fa fa-clock"></i>{{ category.get_newses.0.created }}</a>
+                                                <a href="#" class="text-dark link-hover me-3"><i class="fa fa-eye"></i> {{ category.get_newses.0.views }} Views</a>
+                                                <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>
+                                                <a href="#" class="text-dark link-hover"><i class="fa fa-arrow-up"></i> 1.5k Share</a>
                                             </div>
-
+                                            <p class="my-4">{{ news_banner.description|truncatewords:40 }}</p>
                                         </div>
-                                        {% elif forloop.counter < 7 %}
-                                        {% if forloop.counter == 2 %}
-                                            <div class="col-lg-4">
-                                                <div class="row g-4">
-                                        {% endif %}
-                                        {% if forloop.counter == 6 or forloop.last %}
-                                            <div class="col-12">
-                                                <div class="row g-4 align-items-center">
-                                                    <div class="col-5">
-                                                        <div class="overflow-hidden rounded">
-                                                            <img src="{{ news.get_image }}"
-                                                                 class="img-zoomin img-fluid rounded w-100" alt="">
+                                        <div class="col-lg-4">
+                                            <div class="row g-4">
+                                                {% for news in category.get_newses|slice:"1:" %}
+                                                <div class="col-12">
+                                                    <div class="row g-4 align-items-center">
+                                                        <div class="col-5">
+                                                            <div class="overflow-hidden rounded">
+                                                                <img src="{{ news.get_image }}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-7">
-                                                        <div class="features-content d-flex flex-column">
-                                                            <p class="text-uppercase mb-2">{{ news.category }}</p>
-                                                            <a href="#" class="h6">
-                                                                {{ news.name }}
-                                                            </a>
-                                                            <small class="text-body d-block">
-                                                                <i class="fas fa-calendar-alt me-1"></i>
-                                                                {{ news.update|date:"M d, Y" }}
-                                                            </small>
+                                                        <div class="col-7">
+                                                            <div class="features-content d-flex flex-column">
+                                                                <p class="text-uppercase mb-2">{{ news.category.name }}</p>
+                                                                <a href="{% url 'detail' news.id %}" class="h6">{{ news.name }}</a>
+                                                                <small class="text-body d-block"><i class="fas fa-calendar-alt me-1"></i>
+                                                                    {{ news.created }}</small>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endfor %}
                                             </div>
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                                 {% endfor %}
-                            </div>
-                        </div>
-                        {% for category in categories %}
-                            <div id="{{ category.slug }}" class="tab-pane fade p-0">
-                                <div class="row g-4">
-                                    {% for news in category.get_newses %}
-                                        {% if forloop.first %}
-                                            <div class="col-lg-8">
-                                                <div class="position-relative rounded overflow-hidden">
-                                                    <img src="{{ news.get_image }}"
-                                                         class="img-zoomin img-fluid rounded w-100"
-                                                         alt="">
-                                                    <div class="position-absolute text-white px-4 py-2 bg-primary rounded"
-                                                         style="top: 20px; right: 20px;">
-                                                        {{ news.category.title }}
-                                                    </div>
-                                                </div>
-                                                <div class="my-3">
-                                                    <a href="#" class="h4">{{ news.title }}</a>
-                                                </div>
-                                                <p class="mt-4">{{ news.description|truncatechars:200 }}</p>
-                                                <div class="d-flex justify-content-between">
-                                                    <a href="#" class="text-dark link-hover me-3">
-                                                        <i class="fa fa-clock"></i> {{ news.created_at|time:"H:i" }} {{ news.created_at|date:"d M, Y" }}
-                                                    </a>
-                                                    <a href="#" class="text-dark link-hover me-3">
-                                                        <i class="fa fa-eye"></i> {{ news.views }} Views
-                                                    </a>
-                                                    <a href="#" class="text-dark link-hover me-3"><i
-                                                            class="fa fa-comment-dots"></i>
-                                                        Comments</a>
-                                                    <a href="https://t.me/share/url?url=http://127.0.0.1:8000/news/{{ news.slug }}&text={{ news.title }}"
-                                                       class="text-dark link-hover" target="_blank">
-                                                        <i class="fa fa-arrow-up"></i> To telegram
-                                                    </a>
+                                <div id="" class="tab-pane fade show p-0">
+                                    <div class="row g-4">
+                                        <div class="col-lg-8">
+                                            <div class="position-relative rounded overflow-hidden">
+                                                <img src="{{ news_banner.get_image }}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                <div class="position-absolute text-white px-4 py-2 bg-primary rounded" style="top: 20px; right: 20px;">
+                                                    {{ news_banner.category }}
                                                 </div>
                                             </div>
-                                        {% else %}
-                                            {% if forloop.counter == 2 %}
-                                                <div class="col-lg-4">
-                                                    <div class="row g-4">
-                                            {% endif %}
-
-                                            <div class="col-12">
-                                                <div class="row g-4 align-items-center">
-                                                    <div class="col-5">
-                                                        <div class="overflow-hidden rounded">
-                                                            <img src="{{ news.get_image }}"
-                                                                 class="img-zoomin img-fluid rounded w-100"
-                                                                 alt="">
+                                            <div class="my-3">
+                                                <a href="#" class="h4">{{ news_banner.name }}</a>
+                                            </div>
+                                            <p class="mt-4">{{ news_banner.description }}</p>
+                                            <div class="d-flex justify-content-between">
+                                                <a href="#" class="text-dark link-hover me-3"><i class="fa fa-clock"></i>{{ news_banner.created }}</a>
+                                                <a href="#" class="text-dark link-hover me-3"><i class="fa fa-eye"></i> {{ news_banner.views }} Views</a>
+                                                <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>
+                                                <a href="#" class="text-dark link-hover"><i class="fa fa-arrow-up"></i> 1.5k Share</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="row g-4">
+                                                <div class="col-12">
+                                                    <div class="row g-4 align-items-center">
+                                                        <div class="col-5">
+                                                            <div class="overflow-hidden rounded">
+                                                                <img src="{% static 'img/news-3.jpg' %}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-7">
-                                                        <div class="features-content d-flex flex-column">
-                                                            <p class="text-uppercase mb-2">{{ news.category }}</p>
-                                                            <a href="#" class="h6">{{ news.title|truncatechars:30 }}</a>
-                                                            <small class="text-body d-block">
-                                                                <i class="fas fa-calendar-alt me-1"></i> {{ news.created_at|date:"M d, Y" }}
-                                                            </small>
+                                                        <div class="col-7">
+                                                            <div class="features-content d-flex flex-column">
+                                                                <p class="text-uppercase mb-2">Magazine</p>
+                                                                <a href="#" class="h6">Get the best speak market, news.</a>
+                                                                <small class="text-body d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            {% if forloop.counter == 6 or forloop.last %}
+                                                <div class="col-12">
+                                                    <div class="row g-4 align-items-center">
+                                                        <div class="col-5">
+                                                            <div class="overflow-hidden rounded">
+                                                                <img src="{% static 'img/news-4.jpg' %}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <div class="features-content d-flex flex-column">
+                                                                <p class="text-uppercase mb-2">Magazine</p>
+                                                                <a href="#" class="h6">Get the best speak market, news.</a>
+                                                                <small class="text-body d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
+                                                <div class="col-12">
+                                                    <div class="row g-4 align-items-center">
+                                                        <div class="col-5">
+                                                            <div class="overflow-hidden rounded">
+                                                                <img src="{% static 'img/news-5.jpg' %}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <div class="features-content d-flex flex-column">
+                                                                <p class="text-uppercase mb-2">Magazine</p>
+                                                                <a href="#" class="h6">Get the best speak market, news.</a>
+                                                                <small class="text-body d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row g-4 align-items-center">
+                                                        <div class="col-5">
+                                                            <div class="overflow-hidden rounded">
+                                                                <img src="{% static 'img/news-6.jpg' %}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <div class="features-content d-flex flex-column">
+                                                                <p class="text-uppercase mb-2">Magazine</p>
+                                                                <a href="#" class="h6">Get the best speak market, news.</a>
+                                                                <small class="text-body d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row g-4 align-items-center">
+                                                        <div class="col-5">
+                                                            <div class="overflow-hidden rounded">
+                                                                <img src="{% static 'img/news-7.jpg' %}" class="img-zoomin img-fluid rounded w-100" alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <div class="features-content d-flex flex-column">
+                                                                <p class="text-uppercase mb-2">Magazine</p>
+                                                                <a href="#" class="h6">Get the best speak market, news.</a>
+                                                                <small class="text-body d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        {% endfor %}
 
-                    </div>
+
                             <div class="border-bottom mb-4">
                                 <h2 class="my-4">Most Views News</h2>
                             </div>

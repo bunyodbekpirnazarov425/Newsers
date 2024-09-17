@@ -20,3 +20,11 @@ def home(request):
     }
 
     return render(request, 'index.html', context)
+
+
+def detail(request, pk):
+    news = News.objects.get(pk=pk)
+    context = {
+        "news": news,
+    }
+    return render(request, 'detail.html', context)
