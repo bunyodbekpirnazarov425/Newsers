@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.contrib.auth import login, logout
+from django.shortcuts import render, redirect
+from django.core.handlers.wsgi import WSGIRequest
+
+from .forms import RegisterForm, LoginForm
 from .models import News, Category
 
 def home(request):
@@ -19,7 +23,7 @@ def home(request):
 
     }
 
-    return render(request, 'index.html', context)
+    return render(request, "index.html", context)
 
 
 def detail(request, pk):
@@ -27,4 +31,36 @@ def detail(request, pk):
     context = {
         "news": news,
     }
-    return render(request, 'detail.html', context)
+    return render(request, "detail.html", context)
+
+def register(request: WSGIRequest):
+    if request.method == "POST":
+        form = RegisterForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect("login")
+        else:
+            print(form.error_messages, "**********")
+    else:
+        form = RegisterForm()
+    context = {
+        "form": form,
+    }
+    return render(request, "register.html", context)
+
+def user_login(request: WSGIRequest):
+    if request.method == "POST":
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect("home_page")
+    form = LoginForm()
+    context = {
+        "form": form,
+    }
+    return render(request, "login.html", context)
+
+def user_logout(request):
+    logout(request)
+    return redirect("login")
