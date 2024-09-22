@@ -25,6 +25,9 @@
                             <a href="#" class="text-dark link-hover me-3"><i class="fa fa-eye"></i> {{ news.views }} Views</a>
                             <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>
                             <a href="#" class="text-dark link-hover"><i class="fa fa-arrow-up"></i> 1.5k Share</a>
+                            {% if perms.app.change_news %}
+                            <a href="{% url 'change' %}" class="text-dark link-hover"><i class="fa fa-edit"></i>Update</a>
+                            {% endif %}
                         </div>
                         <p class="my-4">
                             {{ news.description }}

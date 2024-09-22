@@ -1,10 +1,14 @@
+from django.http import HttpResponse
+
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
-
+from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib import messages
 from .forms import RegisterForm, LoginForm
 from .models import News, Category
 
+@login_required
 def home(request):
 
     newses = News.objects.filter(is_active=True)
@@ -25,7 +29,8 @@ def home(request):
 
     return render(request, "index.html", context)
 
-
+@login_required
+@permission_required("app.view_news")
 def detail(request, pk):
     news = News.objects.get(pk=pk)
     context = {
@@ -38,6 +43,7 @@ def register(request: WSGIRequest):
         form = RegisterForm(data=request.POST)
         if form.is_valid():
             user = form.save()
+            messages.success(request, f"Saytdan muaffaqiyatli ro'yxatdan o'tdingiz {user.username}!")
             return redirect("login")
         else:
             print(form.error_messages, "**********")
@@ -54,6 +60,7 @@ def user_login(request: WSGIRequest):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, f"Saytga xush kelibsiz {user.username}!")
             return redirect("home_page")
     form = LoginForm()
     context = {
@@ -61,6 +68,17 @@ def user_login(request: WSGIRequest):
     }
     return render(request, "login.html", context)
 
+@login_required
 def user_logout(request):
     logout(request)
+    messages.warning(request, "Siz saytdan chiqib ketdingiz!!!")
     return redirect("login")
+
+@login_required
+@permission_required("app.change_news", "home_page", raise_exception=True)
+def change_news(request):
+    return HttpResponse("O'zgartirish")
+
+
+def custom_404(request, exception):
+    return render(request, "404.html", status=404)

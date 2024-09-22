@@ -8,6 +8,17 @@
         <meta content="" name="keywords">
         <meta content="" name="description">
 
+        <style>
+            .success{
+                color: green;
+            }
+
+            .warning{
+                color: brown;
+            }
+
+        </style>
+
         {% include 'components/_style.html' %}
     </head>
 
@@ -36,6 +47,14 @@
         {% endblock %}
 
         <!-- Features End -->
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}> {{ message }} </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         {% block content %}
         {% endblock content %}
