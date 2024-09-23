@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>
+    Yangilikni o'chirishni xohlaysizmi?
+  </h2>
+
+  <p>{{ news.name }} yangiligini o'chirmoqchimisiz?</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
+    <a href="{% url 'detail' news.pk %}" class="btn btn-secondary">Yo'q, ortga qaytish</a>
+  </form>
+{% endblock %}

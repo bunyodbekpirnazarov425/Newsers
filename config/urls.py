@@ -18,7 +18,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from app.views import home, detail, register, user_login, user_logout, change_news
+from app.views import (home, detail, register, user_login, user_logout, change_news, create_news, delete_news, update_news)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +28,11 @@ urlpatterns = [
     path('login/', user_login, name="login"),
     path('logout/', user_logout, name="logout"),
     path('change/', change_news, name="change"),
+    path('create/', create_news, name='create_news'),
+    path('update/<int:pk>/', update_news, name='update_news'),
+    path('delete/<int:pk>/', delete_news, name='delete_news'),
 
 
-] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT, hendler404='app.views.custom_404')
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = 'app.views.custom_404'

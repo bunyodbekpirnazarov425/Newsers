@@ -1,11 +1,11 @@
 from django.http import HttpResponse
 
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.handlers.wsgi import WSGIRequest
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib import messages
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, NewsForm
 from .models import News, Category
 
 @login_required
@@ -43,7 +43,8 @@ def register(request: WSGIRequest):
         form = RegisterForm(data=request.POST)
         if form.is_valid():
             user = form.save()
-            messages.success(request, f"Saytdan muaffaqiyatli ro'yxatdan o'tdingiz {user.username}!")
+            messages.success(request, f"Saytdan muaffaqiyatli ro'yxatdan o'tdingiz {user.username} \n"
+                                      f"Login parolni terib saytga krishingiz mumkin!")
             return redirect("login")
         else:
             print(form.error_messages, "**********")
@@ -82,3 +83,56 @@ def change_news(request):
 
 def custom_404(request, exception):
     return render(request, "404.html", status=404)
+
+
+@login_required
+@permission_required("app.add_news")
+def create_news(request: WSGIRequest):
+    if request.method == "POST":
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            news = form.save(commit=False)
+            news.author = request.user
+            news.save()
+            messages.success(request, "Yangilik muvaffaqiyatli qo'shildi!")
+            return redirect("home_page")
+    else:
+        form = NewsForm()
+    context = {
+        "form": form,
+    }
+    return render(request, "create.html", context)
+
+# Yangilikni tahrirlash
+@login_required
+@permission_required("app.change_news")
+def update_news(request: WSGIRequest, pk):
+    news = get_object_or_404(News, pk=pk)
+    if request.method == "POST":
+        form = NewsForm(request.POST, request.FILES, instance=news)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Yangilik muvaffaqiyatli yangilandi!")
+            return redirect("detail", pk=news.pk)
+    else:
+        form = NewsForm(instance=news)
+    context = {
+        "form": form,
+        "news": news,
+    }
+    return render(request, "create.html", context)
+
+# Yangilikni o'chirish
+@login_required
+@permission_required("app.delete_news")
+def delete_news(request: WSGIRequest, pk):
+    news = get_object_or_404(News, pk=pk)
+    if request.method == "POST":
+        news.delete()
+        messages.success(request, "Yangilik muvaffaqiyatli o'chirildi!")
+        return redirect("home_page")
+    context = {
+        "news": news,
+    }
+    return render(request, "delete_form.html", context)
+

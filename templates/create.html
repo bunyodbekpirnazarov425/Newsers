@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>
+    {% if news %}
+      Yangilikni tahrirlash
+    {% else %}
+      Yangilik qo'shish
+    {% endif %}
+  </h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Saqlash</button>
+  </form>
+
+  <a href="{% url 'home_page' %}">Ortga qaytish</a>
+{% endblock %}

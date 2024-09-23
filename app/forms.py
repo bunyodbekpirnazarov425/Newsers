@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from .models import News
+
 
 
 class RegisterForm(UserCreationForm):
@@ -52,3 +54,8 @@ class LoginForm(AuthenticationForm):
             'class': "form-control",
             'placeholder': "Password",
         }))
+
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = News
+        fields = ['name', 'description', 'image', 'category', 'is_banner', 'is_active']
